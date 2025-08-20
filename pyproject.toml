@@ -25,7 +25,21 @@ dependencies = [
     "pyvista",
     "pandas",
     "scipy",
+    "meshio",
     "trame",
+    "trame-components",
+    "trame-vtk",
+    "trame-vuetify",
+    "trame-deckgl",
+    "trame-markdown",
+    "trame-matplotlib",
+    "trame-plotly",
+    "trame-rca",
+    "trame-router",
+    "trame-simput",
+    "trame-vega",
+    "vtk >= 9.1",
+    "colorcet",
 ]
 requires-python = ">=3.11"
 
