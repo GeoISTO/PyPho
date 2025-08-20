@@ -1,0 +1,64 @@
+# pyproject.toml
+
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pypho"
+version = "0.0.0"
+description = "Interactive photogrammetric design for geological objects"
+readme = "README.md"
+authors = [{ name = "Gautier Laurent", email = "gautier.laurent@univ-orleans.fr" }]
+license-files = ["Licence_CeCILL-B_V1-en.txt"]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: Jupyter",
+    "Intended Audience :: Science/Research",
+    "License :: CeCILL-B Free Software License Agreement (CECILL-B)",
+    "Natural Language :: English",
+]
+keywords = ["photography", "photogrammetry", "geology"]
+dependencies = [
+    "pyvista",
+    "pandas",
+    "scipy",
+    "trame",
+]
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+dev = ["jupyter"]
+
+[tool.setuptools]
+py-modules = ["pypho"]
+
+[project.urls]
+Homepage = "https://github.com/gautier-laurent/PhotogrammetryTools"
+
+[tool.bumpver]
+current_version = "0.0.0"
+version_pattern = "MAJOR.MINOR.PATCH"
+commit_message = "bump version {old_version} -> {new_version}"
+tag_message = "{new_version}"
+tag_scope = "default"
+pre_commit_hook = ""
+post_commit_hook = ""
+commit = true
+tag = true
+push = true
+
+[tool.bumpver.file_patterns]
+"pypho/__init__.py" = ["{version}"]
+"pyproject.toml" = [
+    'current_version = "{version}"',
+    'version = "{version}"'
+]
+
+"README.md" = [
+    "{version}",
+    "{pep440_version}",
+]
+
