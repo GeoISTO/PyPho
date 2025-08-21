@@ -40,7 +40,7 @@ dependencies = [
     "vtk >= 9.1",
     "colorcet",
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 nb = ["jupyter"]
