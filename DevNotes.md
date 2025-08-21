@@ -26,3 +26,4 @@ Sequence/List of actions that can be done:
 * Increment the version ```bumpver update --minor``` or ```bumpver update --major``` or ```bumpver update --patch```, to make a test, add the ```-v --dry``` flag
 * Build the package: ```python -m build``` -> they should be added in [./dist](./dist)
 * Check the created dist: ```twine check dist/*```
+* Publish the distribution: ```twine upload dist/*```
