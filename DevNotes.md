@@ -17,10 +17,12 @@ The following tools are used in PyPho:
 * [pip](https://packaging.python.org/en/latest/key_projects/#pip) for managing installation
 * [build](https://packaging.python.org/en/latest/key_projects/#build) as a front end for building
 * [setuptools](https://setuptools.pypa.io/en/latest/index.html) as a backend for building the package
+* [bumpver](https://pypi.org/project/bumpver/) for versionning incrementation
 * [twine](https://packaging.python.org/en/latest/key_projects/#twine) for publishing to PiPy
 
 Sequence/List of actions that can be done:
 * Get the packaging tools (if needed): ```python -m pip install build twine bumpver```
 * Install/Update PyPho locally: ```python -m pip install -e .``` (to be run in PyPho's root directory with the desired environment acitvated)
-* Increment the version ```python -m```
-* Build the package: ```python -m build```
+* Increment the version ```bumpver update --minor``` or ```bumpver update --major``` or ```bumpver update --patch```, to make a test, add the ```-v --dry``` flag
+* Build the package: ```python -m build``` -> they should be added in [./dist](./dist)
+* Check the created dist: ```twine check dist/*```

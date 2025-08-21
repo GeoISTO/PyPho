@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pypho"
-dynamic = ["version"]
+version = "0.0.1"
 description = "Interactive photogrammetric design for geological objects"
 readme = "README.md"
 authors = [{ name = "Gautier Laurent", email = "gautier.laurent@univ-orleans.fr" }]
@@ -17,7 +17,6 @@ classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Framework :: Jupyter",
     "Intended Audience :: Science/Research",
-    "License :: CeCILL-B Free Software License Agreement (CECILL-B)",
     "Natural Language :: English",
 ]
 keywords = ["photography", "photogrammetry", "geology"]
@@ -47,16 +46,13 @@ requires-python = ">=3.11"
 dev = ["jupyter"]
 
 [tool.setuptools]
-py-modules = ["pypho"]
-
-[tool.setuptools.dynamic]
-version = {attr = "pypho.__version__"}
+packages  = ["pypho"]
 
 [project.urls]
-Homepage = "https://github.com/gautier-laurent/PhotogrammetryTools"
+Homepage = "https://github.com/GeoISTO/PyPho"
 
 [tool.bumpver]
-current_version = "0.0.0"
+current_version = "0.0.1"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"
@@ -76,6 +72,5 @@ push = true
 
 "README.md" = [
     "{version}",
-    "{pep440_version}",
 ]
 

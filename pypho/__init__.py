@@ -10,4 +10,4 @@ Modules:
 - target.py: defines different kinds of typical object to be digitised
 - graphics.py: to visualise configuration of the photography campaing
 """
-__version__ = "0.0.0"
+__version__ = "0.0.1"
