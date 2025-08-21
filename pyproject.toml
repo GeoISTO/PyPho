@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pypho"
-version = "0.0.0"
+dynamic = ["version"]
 description = "Interactive photogrammetric design for geological objects"
 readme = "README.md"
 authors = [{ name = "Gautier Laurent", email = "gautier.laurent@univ-orleans.fr" }]
@@ -48,6 +48,9 @@ dev = ["jupyter"]
 
 [tool.setuptools]
 py-modules = ["pypho"]
+
+[tool.setuptools.dynamic]
+version = {attr = "pypho.__version__"}
 
 [project.urls]
 Homepage = "https://github.com/gautier-laurent/PhotogrammetryTools"
