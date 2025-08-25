@@ -367,8 +367,10 @@ class ResolutionGraph(object):
                 res2 = 1/pix_size2
 
                 res_artist_i, = ax_res.plot(z2, res2, label= "Resolution "+cami_name, linewidth= self.plot_line_width, zorder= 5)
-                pix_size_artist_i, = yax2.plot(z2, pix_size2, linestyle= "-", label= "Sampling Distance "+cami_name, linewidth= 0.5*self.plot_line_width, zorder= 5)
-                handles += [res_artist_i, pix_size_artist_i]
+                handles += [res_artist_i]
+                if self.second_yaxis == "SamplingDistance":
+                    pix_size_artist_i, = yax2.plot(z2, pix_size2, linestyle= "-", label= "Sampling Distance "+cami_name, linewidth= 0.5*self.plot_line_width, zorder= 5)
+                    handles += [pix_size_artist_i]
                 
                 if self.use_z_ref: 
                     res_refi = cam2._compute_resolution(self.z_ref)
@@ -378,12 +380,12 @@ class ResolutionGraph(object):
                         res_refi, pix_size_refi
                     )
                     ax_res.scatter(self.z_ref, res_refi, c="k", zorder= 10)
-                    yax2.scatter(self.z_ref, pix_size_refi, c="k", zorder= 10)
                     ax_res.vlines(self.z_ref, ymin= 0, ymax= res_refi, colors="k", linestyles="dotted", zorder= 1)
-                    yax2.vlines(self.z_ref, ymin= 0, ymax= pix_size_refi, colors="k", linestyles="dotted", zorder= 1)
                     ax_res.hlines(res_refi, xmin= ax_res.get_xlim()[0], xmax= self.z_ref, colors="k", linestyles="dotted", linewidth= self.ref_line_width, zorder= 2)
-                    yax2.hlines(pix_size_refi, xmin= self.z_ref, xmax= yax2.get_xlim()[1], colors="k", linestyles="dotted", linewidth= self.ref_line_width, zorder= 2)
-
+                    if self.second_yaxis == "SamplingDistance":
+                        yax2.scatter(self.z_ref, pix_size_refi, c="k", zorder= 10)
+                        yax2.vlines(self.z_ref, ymin= 0, ymax= pix_size_refi, colors="k", linestyles="dotted", zorder= 1)
+                        yax2.hlines(pix_size_refi, xmin= self.z_ref, xmax= yax2.get_xlim()[1], colors="k", linestyles="dotted", linewidth= self.ref_line_width, zorder= 2)
             
         # legend
         ax_res.legend(handles= handles, loc= "upper left", bbox_to_anchor= (1.1,1) )
@@ -711,6 +713,7 @@ class DepthPrecisionGraph(object):
         self.rescale_yaxis()
                 
         # setting the secondary axis
+        yax2 = None
         if self.second_yaxis in ["Resolution", "SamplingDistance"]:
             yax2 = self.ax.twinx()
             if self.second_yaxis == "Resolution":
@@ -747,7 +750,7 @@ class DepthPrecisionGraph(object):
             self.ax.annotate("$Z_2$",(self.cam.Z2,ytext), (self.cam.Z2+ 0.025 * zrange, ytext))
         
         # legend
-        self.ax.legend(handles= self.ax.lines + yax2.lines,
+        self.ax.legend(handles= self.ax.lines + ([] if yax2 is None else yax2.lines),
                        loc= "upper left", bbox_to_anchor= [1.1, 1])
           
 class DepthPrecisionGraphVSFocus(object):
