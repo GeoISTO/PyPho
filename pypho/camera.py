@@ -2293,7 +2293,7 @@ class Camera(CameraBase):
         """Updates the focus distance to aim at the target
         
         Parameters:
-        - target: can be either a point, alist of points, or an object,
+        - target: can be either a point, a list of points, or an object,
         if None (default) the self.target_object is used.
         If a point it should be given as a list of three coordinates.
         If an object, it will focus on the object's points,
@@ -2316,8 +2316,9 @@ class Camera(CameraBase):
         assert(not(target is None and self.target_object is None)), "Warning: can't aim at target because None is attached"
         
         visible = kargs.get("visible", True)
-        if isinstance(target,list) or isinstance(target, np.ndarray):
-            target_points = self.get_visible_points(target) if visible else target
+        if isinstance(target,list) or isinstance(target, np.ndarray) or isinstance(target, tuple):
+            target_points = np.array(target).reshape((-1,3))
+            target_points = self.get_visible_points(target_points) if visible else target_points
         else:
             target = self.target_object if target is None else target
             target_points = self.get_visible_points(target.points, target.point_normals)  if visible else target.points

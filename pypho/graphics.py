@@ -591,8 +591,6 @@ class DepthPrecisionGraph(object):
         # setting z and z_reference
         self._init_z(z_min= z_min, z_max= z_max, z_padding_ratio= z_padding_ratio)
         
-        # at least one of B, B_Z_ratio or overlapratio must be given
-        assert (not(B is None and B_Z_ratio is None and overlap_ratio is None)), "at least one of B, B_Z_ratio or overlapratio must be given"
         if B is not None:
             self.B = np.array([B]).ravel()
             self.B_Z_ratio = self.B / self.cam.Z 
@@ -604,7 +602,12 @@ class DepthPrecisionGraph(object):
         elif overlap_ratio is not None:
             self.overlap_ratio = np.array([overlap_ratio]).ravel()
             self.B_Z_ratio = self.cam._compute_B_Z_from_overlap_ratio(self.overlap_ratio)
-            self.B = self.B_Z_ratio * self.cam.Z         
+            self.B = self.B_Z_ratio * self.cam.Z
+        else:#using B/Z = 1/5
+            self.B_Z_ratio = np.array([1/5]).ravel()
+            self.B = self.B_Z_ratio * self.cam.Z 
+            self.overlap_ratio = self.cam.compute_overlap_ratio_in_normal_case(self.B)
+            
 
     def _init_z(self, z_min= None, z_max= None, z_padding_ratio= 0.1):
         """Initializes the distance grid :py:attr: `z`
