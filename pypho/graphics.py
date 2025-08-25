@@ -1358,7 +1358,7 @@ def plot_sharpness_optimisation_cost(cam, target_points, res= None, cam_shift=No
     target_zx_init = target_zx
     target_zx = target_zx_init + cam_shift
     
-    Z = np.linspace(np.nanmin(target_zx), np.nanmax(target_zx, n)
+    Z = np.linspace(np.nanmin(target_zx), np.nanmax(target_zx, n))
     total_cost = [np.sum(cam._optimize_sharpness_cost(target_zx_init, cam_shift, Z_i, w_in=inside_weight, w_out=outside_weight)) for Z_i in Z]
     plt.plot(Z, total_cost)
     
@@ -1392,14 +1392,14 @@ def plot_sharpness_optimisation(cam, target_points, res, cam_shift= None, Z= Non
     Z1d, Z2d = cam._optimize_sharpness_get_limits(Z, optimize_N= optimize_N, use_diffraction= use_diffraction)
     zx = np.concatenate((
         np.linspace(
-            min(0.9*Z1d, np.nanmin(target_zx),
+            min(0.9*Z1d, np.nanmin(target_zx)),
             Z1d, endpoint=False),
         np.linspace(
             Z1d, Z2d, 100, endpoint= False
         ),
         np.linspace(
             Z2d,
-            max(1.1*Z2d, np.nanmax(target_zx)
+            max(1.1*Z2d, np.nanmax(target_zx))
         )
     ))
     zi = cam._optimize_sharpness_inner_zone(zx, Z1d, Z2d, mode)
