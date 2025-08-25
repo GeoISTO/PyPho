@@ -207,7 +207,7 @@ class ResolutionGraph(object):
             else:
                 self.use_z_ref = True
                 if z_ref is None:
-                    zmin, zmax = self.z.nanmin(), self.z.nanmax()
+                    zmin, zmax = np.nanmin(self.z), np.nanmax(self.z)
                     self.z_ref = zmin + z_ref_ratio * (zmax - zmin)
                 else:
                     self.z_ref = z_ref
@@ -218,7 +218,7 @@ class ResolutionGraph(object):
                 self.use_z_ref = True
                 if zf_ref is None:
                     if z_ref is None:
-                        zfmin, zfmax = self.zf.nanmin(), self.zf.nanmax()
+                        zfmin, zfmax = np.nanmin(self.zf), np.nanmax(self.zf)
                         self.zf_ref = zfmin + z_ref_ratio * (zfmax - zfmin)
                         self.z_ref = zf_ref/1000*self.cam.focal
                     else:
@@ -254,7 +254,7 @@ class ResolutionGraph(object):
         ax_x2.set_xlabel(r"$Z/f$", loc="right")
         #ax_x2.xaxis.set_label_coords(1.25, y= 1.05)
 
-        self.ax.set_xlim(self.z_0, self.z.nanmax())
+        self.ax.set_xlim(self.z_0, np.nanmax(self.z))
 
         # setting the resolution axis
         ax_res = self.ax
@@ -362,7 +362,7 @@ class ResolutionGraph(object):
                 ax_x2_cam2 = self.ax.secondary_xaxis(1 + 0.15*(i+1), functions=(lambda z: z/cam2.focal*1000, lambda z_f: z_f * cam2.focal / 1000))
                 ax_x2_cam2.set_xlabel(r"$Z/f$ ("+cami_name+")", loc="right")
                     
-                z2 = np.linspace(max(self.z.nanmin(), cam2.min_focus_distance), self.z.nanmax(), 100 )
+                z2 = np.linspace(max(np.nanmin(self.z), cam2.min_focus_distance), np.nanmax(self.z), 100 )
                 pix_size2 = cam2._compute_sampling_distance(z2)
                 res2 = 1/pix_size2
 
@@ -411,7 +411,7 @@ class ResolutionGraph(object):
         ax_x2 = self.ax.secondary_xaxis("top", functions=(lambda zf: zf*self.cam.focal/1000, lambda z: z /self.cam.focal * 1000))
         ax_x2.set_xlabel(r"$Z$ (m)", loc="right")
 
-        self.ax.set_xlim(self.zf_0, self.zf.nanmax())
+        self.ax.set_xlim(self.zf_0, np.nanmax(self.zf))
 
         # setting the resolution axis
         ax_res = self.ax
@@ -464,7 +464,7 @@ class ResolutionGraph(object):
             ax_x2_cam2 = self.ax.secondary_xaxis(1 + 0.15*(i+1), functions=(lambda z_f: z_f*cam2.focal/1000, lambda z: z / cam2.focal * 1000))
             ax_x2_cam2.set_xlabel(r"$Z$ (m) ("+cami_name+")", loc="right")
                 
-            zf2 = np.linspace(max(self.zf.nanmin(), cam2.min_focus_distance/cam2.focal*1000), self.zf.nanmax(), 100 )
+            zf2 = np.linspace(max(np.nanmin(self.zf), cam2.min_focus_distance/cam2.focal*1000), np.nanmax(self.zf), 100 )
             z2 = zf2*cam2.focal/1000
             pix_size2 = cam2._compute_sampling_distance(z2)
             res2 = 1/pix_size2
@@ -680,7 +680,7 @@ class DepthPrecisionGraph(object):
                     )
                 
                 ax_x2.set_xlabel(r'$Z/f$', loc="right")
-            self.ax.set_xlim(self.z.nanmin(), self.z.nanmax())
+            self.ax.set_xlim(np.nanmin(self.z), np.nanmax(self.z))
             
         else:
             x_val = self.zf
@@ -691,7 +691,7 @@ class DepthPrecisionGraph(object):
                     lambda z: z /self.cam.focal * 1000)
                     )
                 ax_x2.set_xlabel(r"$Z$ (m)", loc="right")
-            self.ax.set_xlim(self.zf.nanmin(), self.zf.nanmax())
+            self.ax.set_xlim(np.nanmin(self.z), np.nanmax(self.z))
             
         # compute depth precision
         for B, B_Z, tau in zip(self.B, self.B_Z_ratio, self.overlap_ratio):
@@ -931,7 +931,7 @@ class DepthPrecisionGraphVSFocus(object):
                     )
                 
                 ax_x2.set_xlabel(r'$Z/f$', loc="right")
-            self.ax.set_xlim(self.z_0, self.z.nanmax())
+            self.ax.set_xlim(self.z_0, np.nanmax(self.z))
             
         else:
             x_val = self.z_f
@@ -942,7 +942,7 @@ class DepthPrecisionGraphVSFocus(object):
                     lambda z: z /self.cam.focal * 1000)
                     )
                 ax_x2.set_xlabel(r"$Z$ (m)", loc="right")
-            self.ax.set_xlim(self.zf_0, self.zf.nanmax())
+            self.ax.set_xlim(self.zf_0, np.nanmax(self.zf))
             
         # compute depth precision
         if self.B_Z_ratio is not None:
@@ -1229,7 +1229,7 @@ def plot_diffraction_effect(cam, Z= None, N= None, wavelength= None, effective_p
     diffraction_artist, = ax.plot(zx, d_diffraction, color="red", linewidth=0.65, label= "diffraction diameter", zorder=12)
 
     c = cam.confusion_circle_diameter * 1000
-    ymin, ymax = 0, min(d_defocus.nanmax(), 10 * c)
+    ymin, ymax = 0, min(np.nanmax(d_defocus), 10 * c)
     ax.set_ylim(ymin,ymax)
     ax.vlines(cam.Z1, ymin= ymin, ymax= ymax, color="gray")
     ax.vlines(cam.Z2, ymin= ymin, ymax= ymax, color="gray")
@@ -1358,7 +1358,7 @@ def plot_sharpness_optimisation_cost(cam, target_points, res= None, cam_shift=No
     target_zx_init = target_zx
     target_zx = target_zx_init + cam_shift
     
-    Z = np.linspace(target_zx.nanmin(), target_zx.nanmax(), n)
+    Z = np.linspace(np.nanmin(target_zx), np.nanmax(target_zx, n)
     total_cost = [np.sum(cam._optimize_sharpness_cost(target_zx_init, cam_shift, Z_i, w_in=inside_weight, w_out=outside_weight)) for Z_i in Z]
     plt.plot(Z, total_cost)
     
@@ -1392,14 +1392,14 @@ def plot_sharpness_optimisation(cam, target_points, res, cam_shift= None, Z= Non
     Z1d, Z2d = cam._optimize_sharpness_get_limits(Z, optimize_N= optimize_N, use_diffraction= use_diffraction)
     zx = np.concatenate((
         np.linspace(
-            min(0.9*Z1d, target_zx.nanmin()),
+            min(0.9*Z1d, np.nanmin(target_zx),
             Z1d, endpoint=False),
         np.linspace(
             Z1d, Z2d, 100, endpoint= False
         ),
         np.linspace(
             Z2d,
-            max(1.1*Z2d, target_zx.nanmax())
+            max(1.1*Z2d, np.nanmax(target_zx)
         )
     ))
     zi = cam._optimize_sharpness_inner_zone(zx, Z1d, Z2d, mode)
@@ -1416,7 +1416,7 @@ def plot_sharpness_optimisation(cam, target_points, res, cam_shift= None, Z= Non
     ax[0].scatter(target_zx, cam._optimize_sharpness_cost(target_zx_init, cam_shift, Z, w_in=inside_weight, w_out= outside_weight, optimize_N= optimize_N, use_diffraction= use_diffraction, mode= mode), c="k")
 
     if log: ax[0].set_yscale("log")
-    ax[0].vlines([Z, Z1d, Z2d], 0, c.nanmax(), "k")
+    ax[0].vlines([Z, Z1d, Z2d], 0, np.nanmax(c), "k")
  
 #----------------------------------------------------------------------------
 # Viewer
