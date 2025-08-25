@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pypho"
-version = "0.0.2"
+version = "0.0.4"
 description = "Interactive photogrammetric design for geological objects"
 readme = "README.md"
 authors = [{ name = "Gautier Laurent", email = "gautier.laurent@univ-orleans.fr" }]
@@ -26,18 +26,9 @@ dependencies = [
     "scipy",
     "meshio",
     "trame",
-    "trame-components",
+    "vtk >= 9.1",
     "trame-vtk",
     "trame-vuetify",
-    "trame-deckgl",
-    "trame-markdown",
-    "trame-matplotlib",
-    "trame-plotly",
-    "trame-rca",
-    "trame-router",
-    "trame-simput",
-    "trame-vega",
-    "vtk >= 9.1",
     "colorcet",
 ]
 requires-python = ">=3.10"
@@ -52,7 +43,7 @@ packages  = ["pypho"]
 Homepage = "https://github.com/GeoISTO/PyPho"
 
 [tool.bumpver]
-current_version = "0.0.2"
+current_version = "0.0.4"
 version_pattern = "MAJOR.MINOR.PATCH"
 commit_message = "bump version {old_version} -> {new_version}"
 tag_message = "{new_version}"

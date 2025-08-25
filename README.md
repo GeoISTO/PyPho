@@ -5,7 +5,7 @@ Notebooks for testing and using pypho online are provided in a twin repository: 
 
 ## Development ##
 
-Current version: 0.0.2  
+Current version: 0.0.4  
 Main repository for PyPho is at: [GitHub/PyPho](https://github.com/GeoISTO/PyPho)
 
 ### Dependencies ###
