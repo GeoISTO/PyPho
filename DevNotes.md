@@ -38,6 +38,6 @@ pip install . --group docs
 ```
 
 Creation of the documentation:
-* Initialisation of Sphinx `sphinx-quickstart`
-* To build the doc `make html`
+* Initialisation of Sphinx `sphinx-quickstart docs`
+* To build the doc go to the docs folder `cd docs` and run `make html`
 
