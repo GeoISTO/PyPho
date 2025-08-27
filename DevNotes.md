@@ -27,3 +27,17 @@ Sequence/List of actions that can be done:
 * Build the package: ```python -m build``` -> they should be added in [./dist](./dist)
 * Check the created dist: ```twine check dist/*```
 * Publish the distribution: ```twine upload --skip-existing dist/*```
+
+## Documentation
+
+The documentation is based on [sphinx](https://www.sphinx-doc.org).
+
+Sphinx and other dependencies can be installed as they are declared in a group in the [pyproject.toml file](./pyproject.toml).
+```
+pip install . --group docs
+```
+
+Creation of the documentation:
+* Initialisation of Sphinx `sphinx-quickstart`
+* To build the doc `make html`
+
