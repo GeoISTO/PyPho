@@ -29,3 +29,4 @@ In such instance, it is best to compute and visualise everything beforehand, and
    :caption: Contents:
 
    usage
+   api

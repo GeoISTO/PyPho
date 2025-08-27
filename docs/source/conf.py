@@ -15,6 +15,8 @@ author = 'Gautier LAURENT'
 
 extensions = [
     'sphinx.ext.duration',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary',
 ]
 
 templates_path = ['_templates']
