@@ -41,3 +41,5 @@ Creation of the documentation:
 * Initialisation of Sphinx `sphinx-quickstart docs`
 * To build the doc go to the docs folder `cd docs` and run `make html`
 
+The pyvista documentation support is based on this page: [Sphinx PyVista Plot Directive](https://docs.pyvista.org/extras/plot_directive.html)  
+It required installing **sphinx_design**: `pip install sphinx-design`

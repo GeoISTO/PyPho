@@ -24,6 +24,27 @@ In such instance, it is best to compute and visualise everything beforehand, and
 
    This documentation is under development.
 
+Installation
+___________________
+
+**PyPho** can be simply installed from PyPI:
+
+.. code-block:: console
+   
+    (pypho) $ pip install pypho
+
+Main features
+___________________
+
+**PyPho** provides three main classes:
+
+#. :class:`pypho.camera.Camera` 
+#. :class:`pypho.target.TargetObject` 
+#. :class:`pypho.graphics.Viewer3D` 
+
+Table of Contents
+___________________
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
