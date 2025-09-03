@@ -1,4 +1,3 @@
-furo
 sphinx
 sphinx-design
 pyvista[jupyter]
