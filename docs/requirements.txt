@@ -1,7 +1,7 @@
 furo
+sphinx
 sphinx-design
 pyvista[jupyter]
-sphinx
 colorcet
 pandas
 scipy
