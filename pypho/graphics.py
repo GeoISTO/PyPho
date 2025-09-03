@@ -1552,6 +1552,7 @@ class Viewer3D(Viewer):
         
         # defaults
         self.set_view_parameters(**kargs)
+        self.shown = False
         
     def set_view_parameters(self, **kargs):
         """Set the default parameters"""
@@ -1688,6 +1689,8 @@ class Viewer3D(Viewer):
         
         self.grid = self.plotter.show_grid()
         self.plotter.add_axes(interactive= True)
+        
+        self.shown = True
     
     def _plot_camera(self, camera, param):
         """Generic function for ploting camera and shots"""
@@ -1874,6 +1877,12 @@ class Viewer3D(Viewer):
             obj_list = self.objects
                 
         self.scalar_obj = obj_list
+        
+        # if the viewer is not shown yet, simply activate the scalars
+        if self.shown == False:
+            for obj_i in obj_list:
+                obj_i.set_active_scalars(scalar_name)
+            return
         
         # get global min max values
         if len(obj_list) > 0:

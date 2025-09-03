@@ -1,3 +1,7 @@
-furo==2021.11.16
+furo
 sphinx-design
-pyvista
+pyvista[jupyter]
+sphinx
+colorcet
+pandas
+scipy

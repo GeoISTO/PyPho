@@ -20,6 +20,19 @@ In some instance, you might not have the opportunity to repeat the photography s
 and might want to make sure to achieve the expected resolution and characteristics of the 3D result.
 In such instance, it is best to compute and visualise everything beforehand, and **PyPho** is here to help.
 
+Graphical Abstract
+____________________
+
+.. pyvista-plot::
+   :caption: This is PyPho's default scene.
+   :include-source: True
+
+   >>> import pypho
+   >>> from pypho import graphics
+   >>> obj, cam, viewer = pypho.graphics.get_default_scene(show= False)
+   >>> viewer.set_active_scalars("resolution")
+   >>> viewer.show()
+
 .. note::
 
    This documentation is under development.

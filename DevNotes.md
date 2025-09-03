@@ -22,7 +22,7 @@ The following tools are used in PyPho:
 
 Sequence/List of actions that can be done:
 * Get the packaging tools (if needed): ```python -m pip install build twine bumpver```
-* Install/Update PyPho locally: ```python -m pip install -e .``` (to be run in PyPho's root directory with the desired environment acitvated)
+* Install/Update PyPho locally: ```python -m pip install -e .``` (to be run in PyPho's root directory with the desired environment activated)
 * Increment the version ```bumpver update --minor``` or ```bumpver update --major``` or ```bumpver update --patch```, to make a test, add the ```-v --dry``` flag
 * Build the package: ```python -m build``` -> they should be added in [./dist](./dist)
 * Check the created dist: ```twine check dist/*```
