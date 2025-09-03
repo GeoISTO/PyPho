@@ -1,5 +1,3 @@
-accessible-pygments >= 0.0.5
-furo
 sphinx
 sphinx-design
 pyvista[jupyter]
