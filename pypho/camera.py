@@ -308,7 +308,7 @@ class CameraBase(object):
         - sensor_pixel_pitch: the size of sensor's pixels in mm
         
         Returns:
-        - the ground sampling distance (ie., image pixel size projected in the real life) in millimeters
+        - a numpy.ma.array with the ground sampling distance (ie., image pixel size projected in the real life) in millimeters
         """
         return np.ma.array(
             1000 * z / focal * sensor_pixel_pitch,
@@ -456,7 +456,7 @@ class CameraBase(object):
         :param Z: the focus distance to use in the computation. This is optional and only useful for computing
         blur spot without affecting the camera settings. By default (when None) the camera Z is used. 
         :type Z: float, optional
-        :returns: the defocus diameter in micrometers
+        :returns: a numpy.ma.array with the defocus diameter in micrometers
         """
         zx_mm = zx * 1000 
         z_mm = 1000 * (self.Z if Z is None else Z)
@@ -479,7 +479,7 @@ class CameraBase(object):
         k = 2 * np.pi / self.wavelength_nm * 1000
         a = f / 2 / self.N
         q_corrected = q / (1 + m)
-        sin_th = q_corrected / np.sqrt(q_corrected**2 + f**2)
+        sin_th = q_corrected / np.ma.sqrt(q_corrected**2 + f**2)
         return k*a*sin_th
         
     def _compute_diffraction_intensity(self, q, zx):
@@ -540,7 +540,7 @@ class CameraBase(object):
         effective_disk_ratio = effective_disk_ratio if effective_disk_ratio is not None else self.effective_diffraction_disk_ratio
         diffraction_diameter = effective_disk_ratio * self._compute_diffraction_diameter(zx= zx, N= N, wavelength_nm= wavelength_nm)
         sum_sqr = defocus_diameter**2 + diffraction_diameter**2
-        return np.sqrt(sum_sqr)
+        return np.ma.sqrt(sum_sqr)
 
     def _compute_maximum_sharp_aperture(self, Z= None):
         """Computes the maximum aperture number before diffraction removes the entire sharpness zone
@@ -932,20 +932,20 @@ class CameraBase(object):
         self.orientation_objects = {}
         
         self.orientation_objects["front"] = pv.Arrow(
-            self.location,
-            self.dir_vector,
+            start= self.location,
+            direction= self.dir_vector,
             scale= float(self.focal) /100 * 5
             )
         
         self.orientation_objects["left"] = pv.Arrow(
-            self.location,
-            self.w_vector,
+            start= self.location,
+            direction= self.w_vector,
             scale= float(self.focal) /100 * 5
             )
         
         self.orientation_objects["up"] = pv.Arrow(
-            self.location,
-            self.h_vector,
+            start= self.location,
+            direction= self.h_vector,
             scale= float(self.focal) /100 * 5
             )
         
@@ -2381,12 +2381,17 @@ class CameraShot(CameraBase):
         avoid_copy = ["viewer",
                       "shots",
                       "location_object",
+                      "orientation_objects",
                       "camera_object",
                       "sensor_object",
                       "focus_plan_object",
                       "view_frame_object",
                       "sharpness_object",
-                      "sharpness_object_edges"
+                      "sharpness_object_edges",
+                      "diffraction_object",
+                      "diffraction_object_edges",
+                      "visibility_object",
+                      "visible_part_object"
                       ]
         # copy camera parameters (in depth)
         self.__dict__ = deepcopy({key:cam.__dict__[key] for key in cam.__dict__ if key not in avoid_copy})
@@ -2432,7 +2437,7 @@ class CameraShot(CameraBase):
                     obj.point_data["nb_views"]
                 ),
                 nb_sharp_views= np.where(
-                    obj.point_data["visible_sharp"],
+                    obj.point_data["visible_sharp_b"],
                     obj.point_data["nb_sharp_views"]+1,
                     obj.point_data["nb_sharp_views"]
                 ),
@@ -2475,5 +2480,11 @@ class CameraShot(CameraBase):
         self.camera.views[obj] = np.concatenate((
             self.camera.views[obj],
             [obj.point_data["visible_b"]]
+        ))
+        
+        # increment camera sharp views
+        self.camera.sharp_views[obj] = np.concatenate((
+            self.camera.sharp_views[obj],
+            [obj.point_data["visible_sharp_b"]]
         ))
         
