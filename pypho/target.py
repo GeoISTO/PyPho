@@ -117,7 +117,7 @@ class Sphere(TargetObject):
         
         Parameters:
         - translation: a translation to be applied to move the sample.
-        By default (if None) the drill core is created so that its base is set on the XY plane
+        By default (if None) the sphere is created so that its base is set on the XY plane
         at Z = 0, centered on Y=0, X=0
         - rotation: rotation angles in degrees (cf. TargetObject), by default (if None)
         the cylinder is set upright with a direction of [0,0,1]
@@ -125,7 +125,6 @@ class Sphere(TargetObject):
         """
         pv_object = pv.Icosphere(center = [0,0,radius], radius = radius, nsub= nsub)
         pv_object.texture_map_to_sphere(prevent_seam=False, inplace=True)
-        #pv_object.flip_normals()
         super().__init__(pv_object = pv_object,
                          translation= translation,
                          rotation = rotation,

@@ -1616,6 +1616,11 @@ class Viewer3D(Viewer):
         self.shot_param["camera_location_opacity"] =  kargs.get("shot_location_opacity", 1.0)
         self.shot_param["camera_location_point_size_factor"] =  kargs.get("shot_location_point_size_factor", 5)
         
+        self.shot_param["plot_camera_orientation"] = kargs.get("plot_camera_orientation", False)
+        self.shot_param["camera_front_direction_color"] =  kargs.get("camera_front_direction_color", "orange")
+        self.shot_param["camera_left_direction_color"] =  kargs.get("camera_left_direction_color", "blue")
+        self.shot_param["camera_up_direction_color"] =  kargs.get("camera_up_direction_color", "grey")
+        
         self.shot_param["plot_camera_object"] = kargs.get("plot_shot_object", True)
         self.shot_param["camera_object_color"] = kargs.get("shot_object_color", "black")
         self.shot_param["camera_object_opacity"] = kargs.get("shot_object_opacity", 0.75)
@@ -1937,11 +1942,12 @@ class Viewer3D(Viewer):
         
         # handling diffraction zone object which might appear or disappear with N changes
         for cam_i in self.cameras:
-            # remove diffrection object if it was destroyed
-            if cam_i.diffraction_object is None and cam_i in self.diffraction_actors:
-                self.plotter.remove_actor(self.diffraction_actors[cam_i])
-            if cam_i.diffraction_object_edges is None and cam_i in self.diffraction_edges_actors:
-                self.plotter.remove_actor(self.diffraction_edges_actors[cam_i])
+            # remove diffraction object if it was destroyed
+            if "diffraction_object" in cam_i.__dict__:
+                if cam_i.diffraction_object is None and cam_i in self.diffraction_actors:
+                    self.plotter.remove_actor(self.diffraction_actors[cam_i])
+                if cam_i.diffraction_object_edges is None and cam_i in self.diffraction_edges_actors:
+                    self.plotter.remove_actor(self.diffraction_edges_actors[cam_i])
             
             # add it if it needed again
             if cam_i.Z1d is not None and (\

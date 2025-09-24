@@ -934,19 +934,19 @@ class CameraBase(object):
         self.orientation_objects["front"] = pv.Arrow(
             start= self.location,
             direction= self.dir_vector,
-            scale= float(self.focal) /100 * 5
+            scale= float(self.Z) /100 * 5
             )
         
         self.orientation_objects["left"] = pv.Arrow(
             start= self.location,
             direction= self.w_vector,
-            scale= float(self.focal) /100 * 5
+            scale= float(self.Z) /100 * 5
             )
         
         self.orientation_objects["up"] = pv.Arrow(
             start= self.location,
             direction= self.h_vector,
-            scale= float(self.focal) /100 * 5
+            scale= float(self.Z) /100 * 5
             )
         
     def get_orientation_object(self):
@@ -1148,7 +1148,7 @@ class CameraBase(object):
                 ))
         faces = [[0,2,1],[0,3,2],[0,1,4],[1,2,4],[2,3,4],[3,0,4]]
         self.visibility_object = pv.PolyData(corners, faces= [i for face_i in faces for i in [len(face_i)]+face_i])
-        self.visibility_object.flip_normals()
+        self.visibility_object.flip_faces()
         
     def get_visibility_object(self):
         """gets the visibility zone object
@@ -1259,6 +1259,7 @@ class Camera(CameraBase):
         
         # init views array
         self.views = {}
+        self.sharp_views = {}
                 
     def _setup_defaults_and_methods(self, **kargs):
         """Initialises the default methods"""
@@ -1717,21 +1718,21 @@ class Camera(CameraBase):
         if "orientation_objects" in self.__dict__ and self.orientation_objects is not None:
                 
             self.orientation_objects["front"].points = pv.Arrow(
-                self.location,
-                self.dir_vector,
-                scale= float(self.focal) /100 * 5
+                start= self.location,
+                direction= self.dir_vector,
+                scale= float(self.Z) /100 * 5
                 ).points
             
             self.orientation_objects["left"].points = pv.Arrow(
-                self.location,
-                self.w_vector,
-                scale= float(self.focal) /100 * 5
+                start= self.location,
+                direction= self.w_vector,
+                scale= float(self.Z) /100 * 5
                 ).points
             
             self.orientation_objects["up"].points = pv.Arrow(
-                self.location,
-                self.h_vector,
-                scale= float(self.focal) /100 * 5
+                start= self.location,
+                direction= self.h_vector,
+                scale= float(self.Z) /100 * 5
                 ).points
             
     def _update_sensor_object(self):
@@ -1880,6 +1881,7 @@ class Camera(CameraBase):
         
         # init views array
         self.views[target] = np.empty((0, target.n_points), dtype= bool)
+        self.sharp_views[target] = np.empty((0, target.n_points), dtype= bool)
     
     def init_location(self, target_object, dist= None, **kargs):
         """Initialize the location of the camera with respect to the given object.
