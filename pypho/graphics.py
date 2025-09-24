@@ -1545,7 +1545,7 @@ class Viewer3D(Viewer):
         super().__init__(cameras= cameras, shots= shots, objects= objects, lights= lights, **kargs)
         
         # initialise the plotter
-        self.plotter = pv.Plotter() if plotter is None else plotter
+        self.plotter = plotter # pv.Plotter() if plotter is None else plotter # avoid multiple init
         self.actors = {}
         self.diffraction_actors = {}
         self.diffraction_edges_actors = {}
@@ -1678,7 +1678,7 @@ class Viewer3D(Viewer):
              reset_plotter= True
              ):
         """Creates a visualization of the scene in 3D"""
-        if reset_plotter:
+        if reset_plotter or self.plotter is None:
             self.plotter = pv.Plotter()
         if show_cameras: self.plot_cameras()
         if show_objects: self.plot_objects()
@@ -2086,7 +2086,7 @@ class BlurSpotDiameterColormap(ZoneColormap):
             
         
 # default Scene
-def get_default_scene(obj_size= 1.0, dist= 1.0, nsub=3, show= True):
+def get_default_scene(obj_size= 1.0, dist= 1.0, nsub=3, scalar= None, show= True):
     """Creates a default scene with pebble dataset and default camera"""
     obj = get_pebble_dataset(obj_size, nsub=nsub)
     cam = get_default_camera()
@@ -2094,12 +2094,15 @@ def get_default_scene(obj_size= 1.0, dist= 1.0, nsub=3, show= True):
     cam.attach_target(obj, translate=True, rotate=False)
     cam.move_to(dist, "distance")
     viewer = Viewer3D(objects= obj, cameras= cam)
-    if show: viewer.show()
-    
-    viewer.plotter.camera.position = [-0.5,-3,0.25]
-    viewer.plotter.camera.focal_point = [-0.5,0,0.25]
-    viewer.plotter.camera.up = [0,0,1]
-    viewer.plotter.parallel_projection = True
+    if scalar is not None:
+        viewer.set_active_scalars(scalar_name= scalar)
+    if show:
+        viewer.show()
+        
+        viewer.plotter.camera.position = [-0.5,-3,0.25]
+        viewer.plotter.camera.focal_point = [-0.5,0,0.25]
+        viewer.plotter.camera.up = [0,0,1]
+        viewer.plotter.parallel_projection = True
     return obj, cam, viewer
    
 # 2D Viewer        

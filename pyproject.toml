@@ -37,7 +37,7 @@ requires-python = ">=3.10"
 nb = ["jupyter"]
 
 [dependency-groups]
-docs = ["sphinx"]
+docs = ["furo", "sphinx"]
 
 [tool.setuptools]
 packages  = ["pypho"]
