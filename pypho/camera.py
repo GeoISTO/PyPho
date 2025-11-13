@@ -881,6 +881,24 @@ class CameraBase(object):
         v = points - self.location
         return np.einsum("ij,ij->i", normals,v) <= 0
     
+    def _compute_obliquity(self, points, normals, z):
+        """Computes the obliquity (angle between line of sight and normal, in degrees)
+        """        
+        points = np.array(points).reshape((-1,3))
+        
+        v =  self.location - points
+        v = v / np.linalg.norm(v, axis=1)[:,np.newaxis]
+        
+        normals = np.array(normals).reshape((-1,3))
+        n = normals / np.linalg.norm(normals, axis=1)[:,np.newaxis]
+        
+        dot = np.einsum("ij,ij->i", n, v)
+        return np.ma.array(
+            np.rad2deg(np.arccos(dot)),
+            mask= z<0,
+            fill_value= np.nan
+        )
+    
     def _compute_is_in_view(self, angles):
         """Computes if a point is inside the view frame (visible)"""
         return np.logical_and(
@@ -2192,6 +2210,8 @@ class Camera(CameraBase):
             properties["sharp"]
         )
         
+        properties["obliquity"] = self._compute_obliquity(object.points, object.point_normals, cam_coords[:,0])
+        
         if set_properties:
             
             visible = properties["visible"]
@@ -2244,7 +2264,7 @@ class Camera(CameraBase):
             
             for key in ["resolution", "sampling_distance",
                         "defocus_diameter", "diffraction_diameter",
-                        "blur_spot_diameter", "depth_error_std"]:
+                        "blur_spot_diameter", "depth_error_std", "obliquity"]:
                 
                 # setting the value everywhere with _all
                 object.point_data.set_array(properties[key].filled(np.nan), key+"_all")
@@ -2429,6 +2449,8 @@ class CameraShot(CameraBase):
             obj.point_data.set_array(obj.point_data["blur_spot_diameter"], "best_blur_diameter")
         if "best_defocus_diameter" not in obj.point_data.keys():
             obj.point_data.set_array(obj.point_data["defocus_diameter"], "best_defocus_diameter")
+        if "best_obliquity" not in obj.point_data.keys():
+            obj.point_data.set_array(obj.point_data["obliquity"], "best_obliquity")
         
         # increment
         obj.point_data.update(
@@ -2474,6 +2496,14 @@ class CameraShot(CameraBase):
                         obj.point_data["defocus_diameter"]
                     ),
                     obj.point_data["best_defocus_diameter"]
+                ),
+                best_obliquity = np.where(
+                    obj.point_data["visible_b"],
+                    np.fmin(
+                        obj.point_data["best_obliquity"],
+                        obj.point_data["obliquity"]
+                    ),
+                    obj.point_data["best_obliquity"]
                 )
             )
         )
@@ -2490,3 +2520,120 @@ class CameraShot(CameraBase):
             [obj.point_data["visible_sharp_b"]]
         ))
         
+
+
+#-------------------------------------------------------------------------
+# additional cameras
+
+# after https://www.dxomark.com/Cameras/
+
+#--------------------------------------------
+# Nikon
+CameraRegistry.register_camera(
+    uid="NikD850", name= "Nikon D850",
+    sensor_width= 35.9  , sensor_height= 23.9,
+    nb_pixel_width= 8288, nb_pixel_height= 5520    
+)
+
+#--------------------------------------------
+# Hasselblad
+CameraRegistry.register_camera(
+    uid="HX1D50c", name= "Hasselblad X1D-50c",
+    sensor_width= 43.8 , sensor_height= 32.9,
+    nb_pixel_width= 8280 , nb_pixel_height= 6208    
+)
+
+#--------------------------------------------
+# DJI
+CameraRegistry.register_camera(
+    uid="DJIZX7", name= "DJI Zenmuse X7",
+    sensor_width= 23.5 , sensor_height= 15.7,
+    nb_pixel_width= 6016, nb_pixel_height= 4008  
+)
+CameraRegistry.register_camera(
+    uid="DJIZX5S", name= "DJI Zenmuse X5S",
+    sensor_width= 17.3 , sensor_height= 13,
+    nb_pixel_width= 5280, nb_pixel_height= 3956    
+)
+CameraRegistry.register_camera(
+    uid="DJIZX4S", name= "DJI Zenmuse X4S",
+    sensor_width= 13.2 , sensor_height= 8.8,
+    nb_pixel_width= 5472, nb_pixel_height= 3648    
+)
+CameraRegistry.register_camera(
+    uid="DJIP4", name= "DJI Phantom 4",
+    sensor_width= 6.3 , sensor_height= 4.7,
+    nb_pixel_width= 4000, nb_pixel_height= 3000  
+)
+CameraRegistry.register_camera(
+    uid="DJIP4p", name= "DJI Phantom 4 Pro",
+    sensor_width= 13.2, sensor_height= 8.8,
+    nb_pixel_width= 5472, nb_pixel_height= 3648 
+)
+CameraRegistry.register_camera(
+    uid="DJIM3pH", name= "DJI Mavic 3 Pro HAsselblad",
+    sensor_width= 17.75, sensor_height= 11.83, # CMOS 4/3"
+    nb_pixel_width= 5379, nb_pixel_height= 3585 # calculated to give 3.3 micron
+)
+CameraRegistry.register_lens(uid="DJIM3pH", name= "DJI Mavic 3 Pro HAsselblad", focal= 12.3, min_focus_distance= 1)
+#4/3" CMOS avec une taille de pixels de 3.3 μm×3.3 μm pour la caméra HAsselblad, CMOS 1/1,3 pouces pour de 48MP pour la télécaméra moyenne et un CMOS 1/2 pouces de 12MP pour la télécaméra. 
+#Alors, la caméra Hasselblad a une focale de 12.3mm (equivalent à 24mm); la teleobjective moyenne, 19.4mm (Equivalent à 70mm) et la teleobjective de 30.7mm (Equivalent à 166mm)
+
+#--------------------------------------------
+# Canon
+CameraRegistry.register_camera(
+    uid="EOS5DS", name= "Canon EOS 5DS",
+    sensor_width= 36, sensor_height= 24,
+    nb_pixel_width= 8736, nb_pixel_height= 5856  
+)
+
+CameraRegistry.register_camera(
+    uid="EOSR", name= "Canon EOS R",
+    sensor_width= 36, sensor_height= 24,
+    nb_pixel_width= 6732, nb_pixel_height= 4488  
+)
+CameraRegistry.register_camera(
+    uid="EOSR3", name= "Canon EOS R3",
+    sensor_width= 36, sensor_height= 24,
+    nb_pixel_width= 6012, nb_pixel_height= 4016
+)
+
+CameraRegistry.register_camera(
+    uid="EOSR5", name= "Canon EOS R5",
+    sensor_width= 35.9, sensor_height= 23.9,
+    nb_pixel_width= 8216, nb_pixel_height= 5477
+)
+CameraRegistry.register_camera(
+    uid="EOSR6", name= "Canon EOS R6",
+    sensor_width= 35.9, sensor_height= 23.9,
+    nb_pixel_width= 5496, nb_pixel_height= 3670 
+)
+CameraRegistry.register_camera(
+    uid="EOSR8", name= "Canon EOS R8",
+    sensor_width= 35.9, sensor_height= 25.6,
+    nb_pixel_width= 6034, nb_pixel_height= 4024
+)
+
+CameraRegistry.register_camera(
+    uid="EOS1DX3", name= "Canon EOS-1D X Mark III",
+    sensor_width= 36, sensor_height= 24,
+    nb_pixel_width= 5496, nb_pixel_height= 3670
+)
+CameraRegistry.register_camera(
+    uid="EOS1DX2", name= "Canon EOS-1D X Mark II",
+    sensor_width= 36, sensor_height= 24,
+    nb_pixel_width= 5496, nb_pixel_height= 3670
+)
+
+CameraRegistry.register_camera(
+    uid="EOS1DX3", name= "Canon EOS 5D Mark IV",
+    sensor_width= 36, sensor_height= 24,
+    nb_pixel_width= 6880, nb_pixel_height= 4544
+)
+
+# CameraRegistry.register_lens(
+#     uid= "",
+#     name= "",
+#     focal= ,
+#     min_focus_distance=0.3 
+# )
