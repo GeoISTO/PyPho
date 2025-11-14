@@ -1614,12 +1614,12 @@ class Viewer3D(Viewer):
         self.shot_param["plot_camera_location"] = kargs.get("plot_shot_location", False)
         self.shot_param["camera_location_color"] =  kargs.get("shot_location_color", "grey")
         self.shot_param["camera_location_opacity"] =  kargs.get("shot_location_opacity", 1.0)
-        self.shot_param["camera_location_point_size_factor"] =  kargs.get("shot_location_point_size_factor", 5)
+        self.shot_param["camera_location_point_size_factor"] =  kargs.get("shot_location_point_size_factor", 1)
         
-        self.shot_param["plot_camera_orientation"] = kargs.get("plot_camera_orientation", False)
-        self.shot_param["camera_front_direction_color"] =  kargs.get("camera_front_direction_color", "orange")
-        self.shot_param["camera_left_direction_color"] =  kargs.get("camera_left_direction_color", "blue")
-        self.shot_param["camera_up_direction_color"] =  kargs.get("camera_up_direction_color", "grey")
+        self.shot_param["plot_camera_orientation"] = kargs.get("plot_shot_orientation", False)
+        self.shot_param["camera_front_direction_color"] =  kargs.get("shot_front_direction_color", "orange")
+        self.shot_param["camera_left_direction_color"] =  kargs.get("shot_left_direction_color", "blue")
+        self.shot_param["camera_up_direction_color"] =  kargs.get("shot_up_direction_color", "grey")
         
         self.shot_param["plot_camera_object"] = kargs.get("plot_shot_object", True)
         self.shot_param["camera_object_color"] = kargs.get("shot_object_color", "black")

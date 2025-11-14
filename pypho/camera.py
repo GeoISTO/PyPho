@@ -595,9 +595,8 @@ class CameraBase(object):
     def compute_optimal_aperture(self, Z= None, max_N= 25, step= 1/3, rounding= 2):
         """Computes the optimal aperture considering diffraction effect
         
-        :param use_closest_stop: if False, the exact optimal value is used, if True it is
-        "rounded" to the biggest f_stop below the optimal value
-        :type use_closest_stop: bool, default True
+        See get_aperture_number_list for details of parameters.
+        If Z is not given (default) the current focus distance is used.
         :returns: the optimal aperture number N
         """
         
@@ -1285,7 +1284,7 @@ class Camera(CameraBase):
         self.target_object = None
         
         self.orientation = "landscape"
-        self.location = np.array([0,0,0])
+        self.location = np.array([0,0,0]).astype(float)
         self.yaw, self.pitch, self.roll = (0,0,0)
         
         # camera orientation
@@ -1636,11 +1635,13 @@ class Camera(CameraBase):
         - absolute: puts the camera at the absolute location given in coord
         - distance: puts the camera at the distance of the focus point given by coord
         :type mode: str, optional, default is "absolute"
+        - resolution: precomputes the distance to achieve a given resolution passed in the coord argument (in pixels per millimeter)
+        - sampling: precomputes the distance to achieve a given sampling distance passed in the coord argument (in millimeters per pixel)
         """
-        if mode == "absolute":
+        if mode == "absolute":  
             coord = np.array([coord]).ravel()
             assert(len(coord)==3),"coordinates must be a 3D vector"
-            self.location = np.array(coord)
+            self.location = np.array(coord).astype(float)
             self._update_target_point()
             self._update_object_view_properties()
             # update visualisation objects
@@ -1655,6 +1656,9 @@ class Camera(CameraBase):
                 self.move(translation, "forward")
         elif mode == "resolution":
             z = self._compute_z_from_resolution(coord)
+            self.move_to(z, "distance")
+        elif mode == "sampling":
+            z = self._compute_z_from_resolution(1/coord)
             self.move_to(z, "distance")
         else:
             raise Exception("Mode not supported: "+mode)
@@ -1708,7 +1712,7 @@ class Camera(CameraBase):
         self.dir_vector = r.apply(self.location + self.dir_vector - center ) + center - new_location
         self.w_vector = r.apply(self.location + self.w_vector - center ) + center - new_location
         self.h_vector = r.apply(self.location + self.h_vector - center ) + center - new_location
-        self.location = new_location
+        self.location = new_location.astype(float)
         
         # rotation
         self._update_rotation_from_vectors()
