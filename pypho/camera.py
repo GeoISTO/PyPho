@@ -944,35 +944,42 @@ class CameraBase(object):
             self._create_location_object()
         return self.location_object
     
-    def _create_orientation_object(self):
-        """Creates a representation of the camera/shot orientation"""
+    def _create_orientation_object(self, scaling= 5):
+        """Creates a representation of the camera/shot orientation
+        
+        Parameters:
+        - scaling (float): scaling of the arrows given as a percentage of the focus distance Z
+        """
         self.orientation_objects = {}
         
         self.orientation_objects["front"] = pv.Arrow(
             start= self.location,
             direction= self.dir_vector,
-            scale= float(self.Z) /100 * 5
+            scale= float(self.Z) /100 * scaling
             )
         
         self.orientation_objects["left"] = pv.Arrow(
             start= self.location,
             direction= self.w_vector,
-            scale= float(self.Z) /100 * 5
+            scale= float(self.Z) /100 * scaling
             )
         
         self.orientation_objects["up"] = pv.Arrow(
             start= self.location,
             direction= self.h_vector,
-            scale= float(self.Z) /100 * 5
+            scale= float(self.Z) /100 * scaling
             )
         
-    def get_orientation_object(self):
+    def get_orientation_object(self, scaling= 5):
         """Returns the geometry of the camera direction as arrows
         
         If the object is not initialised yet, it will be created.
+        
+        Parameters:
+        - scaling (float): scaling of the arrows given as a percentage of the focus distance Z (ignored if the objects already exist)
         """
         if "orientation_objects" not in self.__dict__ or self.orientation_objects is None:
-            self._create_orientation_object()
+            self._create_orientation_object(scaling= scaling)
         return self.orientation_objects
     
     def _create_sensor_object(self, mirror):

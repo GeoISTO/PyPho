@@ -1563,6 +1563,7 @@ class Viewer3D(Viewer):
         self.camera_param["camera_location_point_size_factor"] =  kargs.get("camera_location_point_size_factor", 5)
         
         self.camera_param["plot_camera_orientation"] = kargs.get("plot_camera_orientation", False)
+        self.camera_param["camera_orientation_scaling"] =  kargs.get("camera_orientation_scaling", 5)
         self.camera_param["camera_front_direction_color"] =  kargs.get("camera_front_direction_color", "orange")
         self.camera_param["camera_left_direction_color"] =  kargs.get("camera_left_direction_color", "blue")
         self.camera_param["camera_up_direction_color"] =  kargs.get("camera_up_direction_color", "grey")
@@ -1617,6 +1618,7 @@ class Viewer3D(Viewer):
         self.shot_param["camera_location_point_size_factor"] =  kargs.get("shot_location_point_size_factor", 1)
         
         self.shot_param["plot_camera_orientation"] = kargs.get("plot_shot_orientation", False)
+        self.shot_param["camera_orientation_scaling"] =  kargs.get("shot_orientation_scaling", 5)
         self.shot_param["camera_front_direction_color"] =  kargs.get("shot_front_direction_color", "orange")
         self.shot_param["camera_left_direction_color"] =  kargs.get("shot_left_direction_color", "blue")
         self.shot_param["camera_up_direction_color"] =  kargs.get("shot_up_direction_color", "grey")
@@ -1679,6 +1681,7 @@ class Viewer3D(Viewer):
              show_shots= True,
              show_objects= True,
              show_lights= True,
+             show_grid= True,
              show_plotter= True,
              reset_plotter= True
              ):
@@ -1692,7 +1695,7 @@ class Viewer3D(Viewer):
         
         if show_plotter: self.plotter.show()
         
-        self.grid = self.plotter.show_grid()
+        if show_grid: self.grid = self.plotter.show_grid()
         self.plotter.add_axes(interactive= True)
         
         self.shown = True
@@ -1707,7 +1710,7 @@ class Viewer3D(Viewer):
                 # TODO :make it a param of viewer size
         
         if param["plot_camera_orientation"]:
-            orientation_objects = camera.get_orientation_object()
+            orientation_objects = camera.get_orientation_object(scaling= param["camera_orientation_scaling"])
             self.plotter.add_mesh(orientation_objects["front"],
                 color = param["camera_front_direction_color"]
                 )
