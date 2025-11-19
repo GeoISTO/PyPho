@@ -43,3 +43,8 @@ Creation of the documentation:
 
 The pyvista documentation support is based on this page: [Sphinx PyVista Plot Directive](https://docs.pyvista.org/extras/plot_directive.html)  
 It required installing **sphinx_design**: `pip install sphinx-design`
+
+## Future Developments
+
+* Graph of shot connection: compute it from matrix of shot-nodes visibility
+* 

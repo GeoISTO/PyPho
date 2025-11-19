@@ -1907,6 +1907,8 @@ class Camera(CameraBase):
         # init fields
         if "nb_views" not in target.point_data.keys():
             target.point_data.set_array(0., "nb_views")
+        if "nb_sharp_views" not in target.point_data.keys():
+            target.point_data.set_array(0., "nb_sharp_views")
         
         # init views array
         self.views[target] = np.empty((0, target.n_points), dtype= bool)
@@ -2394,6 +2396,33 @@ class Camera(CameraBase):
         """returns the shot with the given index or the last by default"""
         return self.shots[index if index is not None else -1]
     
+    def get_overlap_matrix(self, obj= None, sharp= True):
+        """Returns the matrix of overlap counting the number of common points between camera shots"""
+        views = self.sharp_views if sharp else self.views
+        
+        if obj == None:
+            if len(views) == 0: print("Nothing to show, no views.")
+            else:
+                obj = list(views.keys())[0]
+        
+        cam_views = views[obj]
+        n_cam = cam_views.shape[0]
+        cam_overlaps = np.zeros((n_cam,n_cam))
+
+        for i in range(cam_views.shape[1]):
+            node_i_views = cam_views[:,i]
+            cam_overlaps[np.ix_(node_i_views,node_i_views)] += 1
+            
+        return cam_overlaps
+    
+    def get_overlap_graph(self, obj= None, sharp= True, threshold= 0):
+        """Returns the grap edges from overlap matrix"""
+        cam_overlaps = self.get_overlap_matrix(obj=obj, sharp=sharp)
+        i,j = np.where( cam_overlaps > threshold)
+        edge_select = np.logical_and( i!=j, j>i)
+        edge_start, edge_end = i[edge_select], j[edge_select]
+        return edge_start, edge_end, cam_overlaps[edge_start, edge_end]
+        
     def copy(self):
         """Creates a duplicate of the current camera
         
@@ -2530,7 +2559,7 @@ class CameraShot(CameraBase):
             self.camera.sharp_views[obj],
             [obj.point_data["visible_sharp_b"]]
         ))
-        
+
 
 
 #-------------------------------------------------------------------------

@@ -1343,7 +1343,19 @@ def plot_view_matrix(cam, obj = None, show_sum= True, height_ratio= 0.1, ax= Non
         ax_matrix = plt.gca() if ax is None else ax
     ax_matrix.imshow(cam.views[obj])
     if return_fig: return fig, ax
+    
+#----------------------------------------------------------------------------
+def plot_camera_overlap_matrix(cam, obj = None, sharp=True, ax= None, return_fig= False):
+            
+    ax = ax if ax is not None else plt.gca()
+    
+    cam_overlaps = cam.get_overlap_matrix(obj= obj, sharp= sharp)
 
+    plt.imshow(cam_overlaps)
+    plt.colorbar()
+    
+    if return_fig: return ax.figure(), ax
+       
 #----------------------------------------------------------------------------
 
 def plot_sharpness_optimisation_cost(cam, target_points, res= None, cam_shift=None, 
@@ -2011,6 +2023,36 @@ class Viewer3D(Viewer):
                         
             bounds = np.array(list(zip(low_bound, high_bound))).ravel() 
         self.grid.update_bounds(bounds)
+        
+    def plot_overlap_graph(self, radius, cam= None, obj= None, sharp= True, threshold= 0, opacity= None):
+        """Add the overlap graph"""
+        cam = cam if cam is not None else self.cameras[0]
+        edge_start, edge_end, count = cam.get_overlap_graph(obj= obj, sharp= sharp, threshold= threshold)
+        graph_loc = np.array([shot_i.location for shot_i in cam.shots])
+        
+        self.graph_path = pv.PolyData()
+        self.graph_path.points = graph_loc
+
+        cells = np.full((len(edge_start), 3), 2, dtype=np.int_)
+        cells[:, 1] = edge_start
+        cells[:, 2] = edge_end
+        self.graph_path.lines = cells
+        
+        self.graph_path.cell_data["count"] = count
+        self.overlap_graph = self.plotter.add_mesh(self.graph_path.tube(radius= radius), opacity= opacity, scalar_bar_args={'interactive': True})
+        
+    def plot_flight_path(self, radius, color= "gray", cam= None, opacity= None):
+        cam = cam if cam is not None else self.cameras[0]
+        
+        flight_path_loc = np.array([shot_i.location for shot_i in cam.shots])
+        self.flight_path = pv.PolyData()
+        self.flight_path.points = flight_path_loc
+
+        n_shots = len(flight_path_loc)
+        cells = np.concatenate(([n_shots], np.arange(n_shots)), dtype= np.int_)
+        self.flight_path.lines = cells
+        
+        self.flight_path_actor = self.plotter.add_mesh(self.flight_path.tube(radius= radius), color= color, opacity= opacity)
         
 # helper functions
 class CustomColormap(colors.ListedColormap):
