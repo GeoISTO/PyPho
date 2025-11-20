@@ -1581,6 +1581,7 @@ class Viewer3D(Viewer):
         self.camera_param["camera_up_direction_color"] =  kargs.get("camera_up_direction_color", "grey")
         
         self.camera_param["plot_camera_object"] = kargs.get("plot_camera_object", True)
+        self.camera_param["camera_object_scaling"] = kargs.get("camera_object_scaling", 1)
         self.camera_param["camera_object_color"] = kargs.get("camera_object_color", "black")
         self.camera_param["camera_object_opacity"] = kargs.get("camera_object_opacity", 0.5)
         self.camera_param["camera_object_edges_width"] = kargs.get("camera_object_edges_width", 3.0)
@@ -1637,6 +1638,7 @@ class Viewer3D(Viewer):
         
         self.shot_param["plot_camera_object"] = kargs.get("plot_shot_object", True)
         self.shot_param["camera_object_color"] = kargs.get("shot_object_color", "black")
+        self.shot_param["camera_object_scaling"] = kargs.get("shot_object_scaling", 1)
         self.shot_param["camera_object_opacity"] = kargs.get("shot_object_opacity", 0.75)
         self.shot_param["camera_object_edges_width"] = kargs.get("shot_object_edges_width", 2.0)
         
@@ -1734,7 +1736,7 @@ class Viewer3D(Viewer):
                 )
             
         if param["plot_camera_object"]:
-            self.plotter.add_mesh(camera.get_camera_object(),
+            self.plotter.add_mesh(camera.get_camera_object(param["camera_object_scaling"]),
                                   opacity= param["camera_object_opacity"],
                                   edge_color= param["camera_object_color"],
                                   show_edges= True,

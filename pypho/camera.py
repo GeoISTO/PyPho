@@ -982,13 +982,13 @@ class CameraBase(object):
             self._create_orientation_object(scaling= scaling)
         return self.orientation_objects
     
-    def _create_sensor_object(self, mirror):
+    def _create_sensor_object(self, mirror, scale= 1):
         "Creates a representation of the sensor"
-        corners = self._get_sensor_geometry(mirror= mirror)
+        corners = self._get_sensor_geometry(mirror= mirror, scale= scale)
         faces = [[0,2,1],[0,3,2]]
         self.sensor_object = pv.PolyData(corners, faces= [i for face_i in faces for i in [len(face_i)]+face_i])
         
-    def _get_sensor_geometry(self, mirror= True):
+    def _get_sensor_geometry(self, mirror= True, scale= 1):
         """Returns the sensor geometry
         
         An array containing the XYZ coordinates of the four corners of the sensor in clockwise order looking
@@ -997,10 +997,11 @@ class CameraBase(object):
         Parameters:
         - mirror (bool): if True (default) the sensor is projected in the view direction
         instead of its natural place behind the focal point.
+        - scale (float): scaling of the distance from the focal point (deafult is 1)
         """
-        return self._compute_plan_geometry((self.focal if mirror else -self.focal)/1000)
+        return self._compute_plan_geometry(scale * (self.focal if mirror else -self.focal)/1000)
     
-    def get_sensor_object(self, mirror= True):
+    def get_sensor_object(self, mirror= True, scale= 1):
         """Returns the sensor as a 3D object
         
         If the object is not initialised yet, it will be created.
@@ -1011,19 +1012,19 @@ class CameraBase(object):
         """
         if "sensor_object" not in self.__dict__ \
         or self.sensor_object is None:
-            self._create_sensor_object(mirror= mirror)
+            self._create_sensor_object(mirror= mirror, scale= scale)
         return self.sensor_object
     
-    def _create_camera_object(self):
+    def _create_camera_object(self, scale= 1):
         "Creates a representation of the camera"
         corners = np.concatenate((
-            self._get_sensor_geometry(),
+            self._get_sensor_geometry(scale= scale),
             [self.location]
         ))
         faces = [[0,1,4],[1,2,4],[2,3,4],[3,0,4]]
         self.camera_object = pv.PolyData(corners, faces= [i for face_i in faces for i in [len(face_i)]+face_i])
         
-    def get_camera_object(self):
+    def get_camera_object(self, scale= 1):
         """Returns the camera geometry
         
         If the object is not initialised yet, it will be created.
@@ -1032,7 +1033,7 @@ class CameraBase(object):
         """
         if "camera_object" not in self.__dict__ \
         or self.camera_object is None:
-            self._create_camera_object()
+            self._create_camera_object(scale= scale)
         return self.camera_object
     
     def _create_focus_plan_object(self):
