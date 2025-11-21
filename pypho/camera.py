@@ -1357,11 +1357,17 @@ class Camera(CameraBase):
         Defined parameters are:
         - self.sensor_width 
         - self.sensor_height
+        - self.nb_pixel_width
+        - self.nb_pixel_height
+        - self.nb_pixel
         - self.pitch 
         - self.confusion_circle 
         """
         self.sensor_width = self.camera_characteristics["sensor_width"]
         self.sensor_height = self.camera_characteristics["sensor_height"]
+        self.nb_pixel_width = self.camera_characteristics["nb_pixel_width"]
+        self.nb_pixel_height = self.camera_characteristics["nb_pixel_height"]
+        self.nb_pixel = self.nb_pixel_width * self.nb_pixel_height
         self.pixel_pitch = self.camera_characteristics["pixel_pitch"]
         self.confusion_circle_diameter = self._compute_confusion_circle()
         
